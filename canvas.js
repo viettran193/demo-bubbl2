@@ -84,7 +84,9 @@ addEventListener("mousemove", (event) => {
   mouse.x = event.clientX;
   mouse.y = event.clientY;
 });
-
+addEventListener("click", () => {
+  init();
+});
 addEventListener("resize", () => {
   canvas.width = innerWidth;
   canvas.height = innerHeight;
@@ -94,18 +96,19 @@ addEventListener("resize", () => {
 
 // Objects
 class Particle {
-  constructor(x, y, mass, radius, color) {
+  constructor(x, y, mass, radius, color, number) {
     this.x = x;
     this.y = y;
     this.radius = radius;
     this.color = color;
     this.velocity = {
-      x: (Math.random() - 0.5) * 15,
-      y: (Math.random() - 0.5) * 15,
+      x: (Math.random() - 0.5) * 19,
+      y: (Math.random() - 0.5) * 19,
     };
     //this.mass = Math.random(1, 10);
     this.mass = mass;
     this.opacity = 0;
+    this.number = number;
   }
 
   draw() {
@@ -117,6 +120,7 @@ class Particle {
     c.fill();
     c.restore();
     c.strokeStyle = this.color;
+    c.fillText(this.number, this.x - 2 * this.radius * 0.1, this.y);
     c.stroke();
     c.closePath();
   }
@@ -137,14 +141,14 @@ class Particle {
       }
     }
     if (this.x - this.radius <= 0 || this.x + this.radius >= innerWidth) {
-      this.velocity.x = -this.velocity.x * 0.9;
+      this.velocity.x = -this.velocity.x * 0.75;
     }
     if (this.y - this.radius <= 0 || this.y + this.radius >= innerHeight) {
-      this.velocity.y = -this.velocity.y * 0.9;
+      this.velocity.y = -this.velocity.y * 0.75;
     }
     //mouse collision detection
     if (
-      distance(mouse.x, mouse.y, this.x, this.y) < 120 &&
+      distance(mouse.x, mouse.y, this.x, this.y) < canvas.width - this.radius &&
       this.opacity < 0.2
     ) {
       this.opacity += 0.02;
@@ -161,33 +165,39 @@ class Particle {
     //   this.velocity.x += this.velocity.x / 5;
     //   //this.y += this.velocity.y;
     // }
-    this.x += this.velocity.x * 0.1;
-    this.y += this.velocity.y * 0.1;
+    this.x += this.velocity.x * 0.05;
+    this.y += this.velocity.y * 0.05;
   }
 }
 
 // Implementation
 let particles;
+let num = [10, 20, 30, 40, 50];
 
 function init() {
   particles = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 5; i++) {
     const color = randomColor(colors);
-    const radius = Math.round(randomIntFromRange(10, 50));
+    // const radius = Math.round(
+    //   randomIntFromRange(canvas.width / 100, canvas.width / 25)
+    // );
 
+    let number = num[i];
+    const radius = number;
     let mass = 1;
     let x = randomIntFromRange(radius, canvas.width - radius);
     let y = randomIntFromRange(radius, canvas.height - radius);
-    if (i !== 0) {
-      // for (let j = 0; j < particles.length; j++) {
-      //   if (distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
-      //     x = randomIntFromRange(radius, canvas.width - radius);
-      //     y = randomIntFromRange(radius, canvas.height - radius);
-      //     j = -1;
-      //   }
-      // }
-    }
-    particles.push(new Particle(x, y, mass, radius, color));
+    //respawn overlay
+    //if (i !== 0) {
+    // for (let j = 0; j < particles.length; j++) {
+    //   if (distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
+    //     x = randomIntFromRange(radius, canvas.width - radius);
+    //     y = randomIntFromRange(radius, canvas.height - radius);
+    //     j = -1;
+    //   }
+    // }
+    //}
+    particles.push(new Particle(x, y, mass, radius, color, number));
   }
 }
 
