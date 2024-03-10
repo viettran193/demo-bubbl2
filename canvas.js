@@ -1,3 +1,16 @@
+const options = {
+  method: "GET",
+  headers: { "x-cg-demo-api-key": "CG-9yqMiajMmRJ9tCZLJNQTKNAX" },
+};
+
+fetch(
+  "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=10",
+  options
+)
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+  .catch((err) => console.error(err));
+
 function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -96,7 +109,7 @@ addEventListener("resize", () => {
 
 // Objects
 class Particle {
-  constructor(x, y, mass, radius, color, number) {
+  constructor(x, y, mass, radius, color) {
     this.x = x;
     this.y = y;
     this.radius = radius;
@@ -108,7 +121,7 @@ class Particle {
     //this.mass = Math.random(1, 10);
     this.mass = mass;
     this.opacity = 0;
-    this.number = number;
+    //this.number = number;
   }
 
   draw() {
@@ -120,7 +133,7 @@ class Particle {
     c.fill();
     c.restore();
     c.strokeStyle = this.color;
-    c.fillText(this.number, this.x - 2 * this.radius * 0.1, this.y);
+    //c.fillText(this.number, this.x - 2 * this.radius * 0.1, this.y);
     c.stroke();
     c.closePath();
   }
@@ -172,18 +185,18 @@ class Particle {
 
 // Implementation
 let particles;
-let num = [10, 20, 30, 40, 50];
+//let num = [10, 20, 30, 40, 50];
 
 function init() {
   particles = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 100; i++) {
     const color = randomColor(colors);
-    // const radius = Math.round(
-    //   randomIntFromRange(canvas.width / 100, canvas.width / 25)
-    // );
+    const radius = Math.round(
+      randomIntFromRange(canvas.width / 100, canvas.width / 25)
+    );
 
-    let number = num[i];
-    const radius = number;
+    //let number = num[i];
+    //const radius = number;
     let mass = 1;
     let x = randomIntFromRange(radius, canvas.width - radius);
     let y = randomIntFromRange(radius, canvas.height - radius);
@@ -197,7 +210,7 @@ function init() {
     //   }
     // }
     //}
-    particles.push(new Particle(x, y, mass, radius, color, number));
+    particles.push(new Particle(x, y, mass, radius, color)); //number
   }
 }
 
