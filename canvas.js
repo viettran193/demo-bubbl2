@@ -3,13 +3,34 @@ const options = {
   headers: { "x-cg-demo-api-key": "CG-9yqMiajMmRJ9tCZLJNQTKNAX" },
 };
 
-fetch(
-  "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=10",
-  options
-)
-  .then((response) => response.json())
-  .then((response) => console.log(response))
-  .catch((err) => console.error(err));
+// fetch(
+//   "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=10",
+//   options
+// )
+//   .then((response) => response.json())
+//   //data of 1 coin . call specific index
+//   // .then((response) => console.log(response[1].market_cap_change_percentage_24h))
+//   .then((response) => console.log(response))
+//   .then((json) => stored_data.push(json))
+//   .then(() => console.log(stored_data))
+
+//   // .then((stored_data) => {
+//   //   console.log(stored_data);
+//   // array now ready for manipulation
+//   // })
+//   .catch((err) => console.error(err));
+
+//console.log(stored_data);
+// let globalData;
+
+// async function myFunction() {
+//   const res = await fetch(
+//     "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=10"
+//   );
+//   const data = await res.json();
+//   globalData = data;
+//   console.log(globalData);
+// }
 
 function randomIntFromRange(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -109,10 +130,12 @@ addEventListener("resize", () => {
 
 // Objects
 class Particle {
-  constructor(x, y, mass, radius, color) {
+  constructor(x, y, mass, radius, color, num, name) {
     this.x = x;
     this.y = y;
     this.radius = radius;
+    this.name = name;
+    this.num = num;
     this.color = color;
     this.velocity = {
       x: (Math.random() - 0.5) * 19,
@@ -133,7 +156,8 @@ class Particle {
     c.fill();
     c.restore();
     c.strokeStyle = this.color;
-    //c.fillText(this.number, this.x - 2 * this.radius * 0.1, this.y);
+    c.fillText(this.num, this.x - 2 * this.radius * 0.1, this.y);
+    c.fillText(this.name, this.x, this.y + 10);
     c.stroke();
     c.closePath();
   }
@@ -186,32 +210,80 @@ class Particle {
 // Implementation
 let particles;
 //let num = [10, 20, 30, 40, 50];
+//console.log(this.globalData);
 
 function init() {
-  particles = [];
-  for (let i = 0; i < 100; i++) {
-    const color = randomColor(colors);
-    const radius = Math.round(
-      randomIntFromRange(canvas.width / 100, canvas.width / 25)
-    );
+  fetch(
+    "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=100&price_change_percentage=24h",
+    options
+  )
+    .then((response) => response.json())
+    //.then((response) => console.log(response))
+    .then((response) => {
+      for (let i = 0; i < response.length; i++) {
+        console.log(response[i].price_change_percentage_24h);
+        const color = randomColor(colors);
+        // const radius = Math.round(
+        //   randomIntFromRange(canvas.width / 100, canvas.width / 25)
+        // );
+        let data = response[i].price_change_percentage_24h;
+        const num = data.toFixed(1);
+        const name = response[i].symbol;
+        const radius = Math.abs(
+          (canvas.width * response[i].price_change_percentage_24h) / 200
+        );
 
-    //let number = num[i];
-    //const radius = number;
-    let mass = 1;
-    let x = randomIntFromRange(radius, canvas.width - radius);
-    let y = randomIntFromRange(radius, canvas.height - radius);
-    //respawn overlay
-    //if (i !== 0) {
-    // for (let j = 0; j < particles.length; j++) {
-    //   if (distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
-    //     x = randomIntFromRange(radius, canvas.width - radius);
-    //     y = randomIntFromRange(radius, canvas.height - radius);
-    //     j = -1;
-    //   }
-    // }
-    //}
-    particles.push(new Particle(x, y, mass, radius, color)); //number
-  }
+        //let number = num[i];
+        //const radius = number;
+        let mass = 1;
+        let x = randomIntFromRange(radius, canvas.width - radius);
+        let y = randomIntFromRange(radius, canvas.height - radius);
+
+        //respawn overlay
+
+        //if (i !== 0) {
+        // for (let j = 0; j < particles.length; j++) {
+        //   if (distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
+        //     x = randomIntFromRange(radius, canvas.width - radius);
+        //     y = randomIntFromRange(radius, canvas.height - radius);
+        //     j = -1;
+        //   }
+        // }
+        //}
+        particles.push(new Particle(x, y, mass, radius, color, num, name)); //number
+      }
+    })
+
+    .catch((err) => console.error(err));
+
+  particles = [];
+  // for (let i = 0; i < 10; i++) {
+  //   //let data = this.response[i].market_cap_change_percentage_24h;
+
+  //   const color = randomColor(colors);
+  //   const radius = Math.round(
+  //     randomIntFromRange(canvas.width / 100, canvas.width / 25)
+  //   );
+
+  //   //let number = num[i];
+  //   //const radius = number;
+  //   let mass = 1;
+  //   let x = randomIntFromRange(radius, canvas.width - radius);
+  //   let y = randomIntFromRange(radius, canvas.height - radius);
+
+  //   //respawn overlay
+
+  //   //if (i !== 0) {
+  //   // for (let j = 0; j < particles.length; j++) {
+  //   //   if (distance(x, y, particles[j].x, particles[j].y) - radius * 2 < 0) {
+  //   //     x = randomIntFromRange(radius, canvas.width - radius);
+  //   //     y = randomIntFromRange(radius, canvas.height - radius);
+  //   //     j = -1;
+  //   //   }
+  //   // }
+  //   //}
+  //   particles.push(new Particle(x, y, mass, radius, color)); //number
+  // }
 }
 
 // Animation Loop
